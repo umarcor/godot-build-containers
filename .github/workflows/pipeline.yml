@@ -16,3 +16,11 @@ jobs:
       - run: ./build.sh 4.x free
 
       - run: podman images
+
+      - name: Push to ghcr.io
+        uses: pyTooling/Actions/with-post-step@r0
+        with:
+          main: |
+            echo '${{ github.token }}' | docker login ghcr.io -u gha --password-stdin
+            ./upload.sh 4.x ghcr.io/umarcor/godot
+          post: docker logout ghcr.io
