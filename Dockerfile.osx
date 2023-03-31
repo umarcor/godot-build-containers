@@ -1,5 +1,5 @@
 ARG img_version
-FROM godot-fedora:${img_version}
+FROM godot/build/fedora:${img_version}
 
 RUN dnf -y install --setopt=install_weak_deps=False \
       automake autoconf bzip2-devel cmake gcc gcc-c++ libicu-devel libtool libxml2-devel openssl-devel yasm \

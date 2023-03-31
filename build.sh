@@ -27,7 +27,6 @@ if [ -z "$1" ]; then
 fi
 
 godot_branch=$1
-img_version=$godot_branch
 files_root="$(cd dirname "$0"; pwd)/files"
 
 if [ ! -z "$2" ]; then
@@ -40,7 +39,7 @@ fi
 
 if [ ! -z "$PS1" ]; then
   # Confirm settings
-  echo "Docker image tag: ${img_version}"
+  echo "Docker image tag: ${godot_branch}"
   echo
   while true; do
     read -p "Is this correct? [y/n] " yn
@@ -54,14 +53,14 @@ fi
 
 mkdir -p logs
 
-"$podman" build -t godot-fedora:${img_version} -f Dockerfile.base . 2>&1 | tee logs/base.log
+"$podman" build -t godot/build/fedora:${godot_branch} -f Dockerfile.base . 2>&1 | tee logs/base.log
 
 podman_build() {
   # You can add --no-cache  as an option to podman_build below to rebuild all containers from  scratch.
   "$podman" build \
-  --build-arg img_version=${img_version} \
+  --build-arg img_version=${godot_branch} \
   -v "${files_root}":/root/files:z \
-  -t godot-"$1:${img_version}" \
+  -t godot/build/"$1:${godot_branch}" \
   -f Dockerfile."$1" . \
   2>&1 | tee logs/"$1".log
 }
@@ -71,6 +70,7 @@ podman_build export
 for platform in linux windows web android; do
   if grep -q "$platform" <<< "$platforms"; then podman_build "$platform"; fi
 done
+
 
 if grep -q osx <<< "$platforms" || grep -q ios <<< "$platforms"; then
   XCODE_SDK=14.1
@@ -89,7 +89,7 @@ if grep -q osx <<< "$platforms" || grep -q ios <<< "$platforms"; then
       -e XCODE_SDKV="${XCODE_SDK}" \
       -e OSX_SDKV="${OSX_SDK}" \
       -e IOS_SDKV="${IOS_SDK}" \
-      godot-xcode:${img_version} \
+      godot/build/xcode:${godot_branch} \
       2>&1 | tee logs/xcode_packer.log
   fi
 
