@@ -6,35 +6,31 @@ source $basedir/setup.sh
 
 platforms="linux,windows,web,android,osx,ios,msvc"
 
-if [ -z "$1" -o -z "$2" ]; then
-  echo "Usage: $0 <godot branch> <base distro> [<platforms>]"
+if [ -z "$1" ]; then
+  echo "Usage: $0 <godot branch> [<platforms>]"
   echo
-  echo "Example: $0 3.x f35"
+  echo "Example: $0 3.x"
   echo
   echo "godot branch:"
   echo "        Informational, tracks the Godot branch these containers are intended for."
-  echo
-  echo "base distro:"
-  echo "        Informational, tracks the base Linux distro these containers are based on."
   echo
   echo "(Optional) platforms:"
   echo "        Comma-separated list of platforms."
   echo "        Defaults to: $platforms"
   echo
-  echo "The resulting image version will be <godot branch>-<base distro>."
+  echo "The resulting image version will be <godot branch>."
   exit 1
 fi
 
 godot_branch=$1
-base_distro=$2
-img_version=$godot_branch-$base_distro
+img_version=$godot_branch
 files_root="$basedir/files"
 
-if [ ! -z "$3" ]; then
-  case "$3" in
+if [ ! -z "$2" ]; then
+  case "$2" in
     free) platforms="linux,windows,web,android";;
     nonfree) platforms="osx,ios,msvc";;
-    *) platforms="$3";;
+    *) platforms="$2";;
   esac
 fi
 
