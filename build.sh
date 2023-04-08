@@ -26,7 +26,7 @@ fi
 godot_branch=$1
 base_distro=$2
 img_version=$godot_branch-$base_distro
-files_root=$(pwd)/files
+files_root="$(cd dirname "$0"; pwd)/files"
 build_msvc=0
 
 # Confirm settings
